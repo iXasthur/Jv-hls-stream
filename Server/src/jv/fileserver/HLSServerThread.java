@@ -26,8 +26,8 @@ public class HLSServerThread extends Thread {
              DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream())){
 
             HTTPRequest request = new HTTPRequest(inputStream);
-            request.outputRequest();
-            System.out.println();
+//            request.outputRequest();
+//            System.out.println();
             HTTPResponse response = new APIHandler(request, serverFilesFolderPath).getResponse();
             response.send(outputStream);
 
