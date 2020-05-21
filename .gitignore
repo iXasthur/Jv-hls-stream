@@ -184,5 +184,5 @@ $RECYCLE.BIN/
 
 # End of https://www.gitignore.io/api/java,linux,macos,windows,jetbrains+all
 
-serverFiles/*
+Server/serverFiles/*
 ffmpeg_script.txt
