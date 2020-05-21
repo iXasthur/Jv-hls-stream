@@ -94,10 +94,6 @@ public class APIHandler {
 
         switch (method) {
             case "GET": {
-                // curl localhost:8080
-
-                // If folder passed, return its structure
-                // If file - return file with download headers
                 if (Files.exists(filePath)) {
                     // Send file
                     if (Files.isRegularFile(filePath)) {
@@ -110,7 +106,7 @@ public class APIHandler {
 
                             response = new HTTPResponse(200);
                             response.setData(bytes, fileExtension);
-//                            response.addHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+
                             response.addHeader("Access-Control-Allow-Origin", "*");
                             response.addHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
                             response.addHeader("Access-Control-Allow-Credentials", "true");
@@ -119,18 +115,6 @@ public class APIHandler {
 //                            e.printStackTrace();
                         }
                     }
-//                    if (Files.isDirectory(filePath)) {
-//                        // Send directory structure
-//                        response = new HTTPResponse(500);
-//
-//                        try {
-//                            String xmlString = getDirectoryStructureXML(request.getRelativePath());
-//                            response = new HTTPResponse(200);
-//                            response.setData(xmlString.getBytes(), "txt");
-//                        } catch (IOException | ParserConfigurationException | TransformerException e) {
-////                            e.printStackTrace();
-//                        }
-//                    }
                 } else {
                     response = new HTTPResponse(404);
                     response.setData("File does not exist".getBytes(), "txt");

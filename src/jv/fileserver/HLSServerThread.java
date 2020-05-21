@@ -8,12 +8,12 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-public class FileServerThread extends Thread {
+public class HLSServerThread extends Thread {
 
     private final Socket socket;
     private final String serverFilesFolderPath;
 
-    public FileServerThread(Socket socket, String severFilesFolderPath) {
+    public HLSServerThread(Socket socket, String severFilesFolderPath) {
         this.socket = socket;
         this.serverFilesFolderPath = severFilesFolderPath;
     }
