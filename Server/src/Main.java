@@ -11,8 +11,6 @@ public class Main {
 
     public static void main(String[] args) {
 
-        // curl localhost:8080 --output jvOut.txt
-
         // Set 8080 as default value in IDE
 
         if (args.length != 2) {
