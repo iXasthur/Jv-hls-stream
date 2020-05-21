@@ -94,6 +94,10 @@ public class APIHandler {
 
         switch (method) {
             case "GET": {
+
+                // For downloading files
+                // + to get available videos
+
                 if (Files.exists(filePath)) {
                     // Send file
                     if (Files.isRegularFile(filePath)) {
@@ -111,6 +115,7 @@ public class APIHandler {
                             response.addHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
                             response.addHeader("Access-Control-Allow-Credentials", "true");
                             response.addHeader("Access-Control-Allow-Methods", "GET");
+
                         } catch (IOException e) {
 //                            e.printStackTrace();
                         }
