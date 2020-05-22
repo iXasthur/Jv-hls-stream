@@ -99,8 +99,8 @@ public class APIHandler {
                 // + to get available videos
 
                 if (Files.exists(filePath)) {
-                    // Send file
                     if (Files.isRegularFile(filePath)) {
+                        // Send file
                         response = new HTTPResponse(500);
 
                         try {
@@ -111,12 +111,23 @@ public class APIHandler {
                             response = new HTTPResponse(200);
                             response.setData(bytes, fileExtension);
 
+                            // Headers to allow CORS
                             response.addHeader("Access-Control-Allow-Origin", "*");
                             response.addHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
                             response.addHeader("Access-Control-Allow-Credentials", "true");
                             response.addHeader("Access-Control-Allow-Methods", "GET");
 
                         } catch (IOException e) {
+//                            e.printStackTrace();
+                        }
+                    } else if (Files.isDirectory(filePath)) {
+                        // Send directory structure
+                        response = new HTTPResponse(500);
+                        try {
+                            String xmlString = getDirectoryStructureXML(request.getRelativePath());
+                            response = new HTTPResponse(200);
+                            response.setData(xmlString.getBytes(), "txt");
+                        } catch (IOException | ParserConfigurationException | TransformerException e) {
 //                            e.printStackTrace();
                         }
                     }
