@@ -19,9 +19,8 @@ public class HTTPContentType {
         types.put("jpg", "image/jpg");
         types.put("php", "text/plain");
 
-//        types.put("m3u", "application/vnd.apple.mpegurl");
-//        types.put("m3u8", "application/vnd.apple.mpegurl");
-//        types.put("mp4", "video/mp4");
+        types.put("m3u8", "application/vnd.apple.mpegurl");
+        types.put("ts",	"video/mp2t");
     }
 
     public static String getContentTypeFor(String extension) {
