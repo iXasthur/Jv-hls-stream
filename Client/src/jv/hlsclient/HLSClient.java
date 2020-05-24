@@ -25,10 +25,11 @@ public class HLSClient {
     // Root folder of the server must contain folders with .m3u8 file + .ts files
     // name of folder == name of video
     // every folder in root will be recognized as video folder
+    // directory name must not contain spaces
 
     final public URL domain; // "http://localhost:8080/
                                                      // test4/index.m3u8";
-    final private String playlistFileExtension = "m3u8";
+    final private String playlistFileName = "index.m3u8";
     final private Vector<String> videoFolderNames = new Vector<>(0);
 
     public HLSClient(URL domain) throws Exception {
@@ -44,6 +45,9 @@ public class HLSClient {
     private void getAvailableVideos() throws Exception {
         String host = domain.getHost();
         int port = domain.getPort();
+        if (port == -1) {
+            port = 80;
+        }
 
         Socket socket = null;
         try {
@@ -63,10 +67,8 @@ public class HLSClient {
         requestStringBuilder.append(":");
         requestStringBuilder.append(" ");
         requestStringBuilder.append(host);
-        if (port != -1) {
-            requestStringBuilder.append(":");
-            requestStringBuilder.append(port);
-        }
+        requestStringBuilder.append(":");
+        requestStringBuilder.append(port);
         requestStringBuilder.append("\r\n");
         requestStringBuilder.append("\r\n");
 
@@ -125,7 +127,16 @@ public class HLSClient {
         return videoFolderNames;
     }
 
-    public HLSMedia getMedia(String playlistDirectory, String playlistFileName) {
+    public HLSMedia getMedia(String playlistDirectory) {
+//        try {
+//            getAvailableVideos();
+//        } catch (Exception e) {
+//            return null;
+//        }
+//        if (!videoFolderNames.contains(playlistDirectory)) {
+//            return null;
+//        }
+
         String source = domain + playlistDirectory + "/" + playlistFileName;
         Media media;
         MediaPlayer mediaPlayer;

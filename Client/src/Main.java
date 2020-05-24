@@ -1,18 +1,29 @@
 import javafx.application.Application;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
+import javafx.geometry.Bounds;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import jv.hlsclient.HLSClient;
-import jv.http.HTTPRequest;
+import jv.hlsclient.HLSMedia;
 
 import java.awt.Toolkit;
 import java.awt.Dimension;
@@ -21,9 +32,6 @@ import java.net.URL;
 import java.util.Vector;
 
 public class Main extends Application {
-
-    //        root.getChildren().add(mediaView);
-//        mediaPlayer.play();
 
     private final Color backgroundColor = Color.rgb(24,24,24);
     private final Color textColor = Color.rgb(253,216,53);
@@ -98,13 +106,70 @@ public class Main extends Application {
                     connectionResultLabel.setText("Connecting...");
                     connect(inputAddressTextField.getText());
                     connectionResultLabel.setText("Successfully connected");
-                    inputAddressTextField.setEditable(false);
+                    inputAddressTextField.setDisable(true);
                     connectButton.setText("Reset");
 
                     Vector<String> videoFolders = client.getVideoFolderNames();
                     for (int i = 0; i < videoFolders.size(); i++) {
                         Button button = new Button(videoFolders.elementAt(i));
                         videoButtons.add(button);
+
+                        button.setOnAction(actionEvent -> {
+                            String videoName = button.getText();
+                            HLSMedia hlsMedia = client.getMedia(videoName);
+                            System.out.println(hlsMedia);
+                            if (hlsMedia != null) {
+                                Stage videoStage = new Stage();
+                                videoStage.setTitle(videoName);
+                                VBox videoBox = new VBox(hlsMedia.mediaView);
+                                videoBox.setAlignment(Pos.CENTER);
+                                videoBox.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
+                                Scene videoScene = new Scene(videoBox, sceneWidth, sceneHeight, backgroundColor);
+                                videoStage.setScene(videoScene);
+
+                                hlsMedia.mediaView.getParent().layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {
+                                    @Override
+                                    public void changed(ObservableValue<? extends Bounds> observable, Bounds oldValue, Bounds newValue) {
+                                        if (hlsMedia.mediaPlayer.getStatus() != MediaPlayer.Status.DISPOSED) {
+                                            hlsMedia.mediaView.setFitHeight(newValue.getHeight());
+                                            hlsMedia.mediaView.setFitWidth(newValue.getWidth());
+                                        }
+                                    }
+                                });
+
+                                hlsMedia.mediaPlayer.setOnEndOfMedia(() -> {
+                                    hlsMedia.mediaPlayer.dispose();
+
+                                    videoBox.setBackground(new Background(new BackgroundFill(backgroundColor, CornerRadii.EMPTY, Insets.EMPTY)));
+
+                                    Label label = new Label("Video ended");
+                                    label.setTextFill(textColor);
+                                    label.setFont(Font.font("Arial", FontWeight.BOLD, fontSize*2));
+
+                                    videoBox.getChildren().remove(hlsMedia.mediaView);
+                                    videoBox.getChildren().add(label);
+                                });
+                                videoStage.setMinWidth(sceneWidth/2.0);
+                                videoStage.setMinHeight(sceneHeight/2.0);
+
+                                videoStage.setWidth(sceneWidth);
+                                videoStage.setHeight(sceneHeight);
+
+                                videoStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                                                                 @Override
+                                                                 public void handle(WindowEvent windowEvent) {
+                                                                     hlsMedia.mediaPlayer.dispose();
+                                                                 }
+                                                             }
+                                );
+
+                                videoStage.show();
+
+                                hlsMedia.mediaPlayer.play();
+                            } else {
+                                button.setDisable(true);
+                            }
+                        });
                     }
 
                     vBox.getChildren().addAll(videoButtons);
@@ -112,15 +177,14 @@ public class Main extends Application {
                     connectionResultLabel.setText(e.getMessage());
                 }
             } else {
-//                String playlistFileName = "index.m3u8";
                 vBox.getChildren().removeAll(videoButtons);
                 videoButtons.clear();
 
                 client = null;
                 connectButton.setText("Connect");
                 connectionResultLabel.setText("");
-                inputAddressTextField.setText("");
-                inputAddressTextField.setEditable(true);
+//                inputAddressTextField.setText("");
+                inputAddressTextField.setDisable(false);
             }
         });
     }
