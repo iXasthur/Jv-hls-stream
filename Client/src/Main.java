@@ -18,6 +18,7 @@ import java.awt.Toolkit;
 import java.awt.Dimension;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Vector;
 
 public class Main extends Application {
 
@@ -70,35 +71,17 @@ public class Main extends Application {
         connectionResultLabel.setFont(Font.font("Arial", FontWeight.BOLD, fontSize/3*2));
         connectionResultLabel.setTextAlignment(TextAlignment.CENTER);
 
-        Button connectButton = new Button("Connect");
-        connectButton.setOnAction(action -> {
-            if (client == null) {
-                try {
-                    connectionResultLabel.setText("Connecting...");
-                    connect(inputAddressTextField.getText());
-                    connectionResultLabel.setText("Successfully connected");
-                    inputAddressTextField.setEditable(false);
-                    connectButton.setText("Disconnect");
-                } catch (Exception e) {
-                    connectionResultLabel.setText(e.getMessage());
-                }
-            } else {
-//                String playlistFileName = "index.m3u8";
-                client = null;
-                connectButton.setText("Connect");
-                connectionResultLabel.setText("");
-                inputAddressTextField.setText("");
-                inputAddressTextField.setEditable(true);
-            }
-        });
+        Vector<Button> videoButtons = new Vector<>(0);
 
-        HBox hbox = new HBox(inputAddressTextField, connectButton);
-        hbox.setSpacing(5);
+        Button connectButton = new Button("Connect");
+
+        HBox hBox = new HBox(inputAddressTextField, connectButton);
+        hBox.setSpacing(5);
 
         Label inputAddressLabel = new Label("Input server address");
         inputAddressLabel.setTextFill(textColor);
         inputAddressLabel.setFont(Font.font("Arial", FontWeight.BOLD, fontSize));
-        VBox vBox = new VBox(inputAddressLabel, hbox, connectionResultLabel);
+        VBox vBox = new VBox(inputAddressLabel, hBox, connectionResultLabel);
 
         vBox.setLayoutX(sceneHeight/20);
         vBox.setLayoutY(sceneHeight/20);
@@ -106,6 +89,40 @@ public class Main extends Application {
         vBox.setSpacing(10);
 
         root.getChildren().add(vBox);
+
+
+        // Actions
+        connectButton.setOnAction(action -> {
+            if (client == null) {
+                try {
+                    connectionResultLabel.setText("Connecting...");
+                    connect(inputAddressTextField.getText());
+                    connectionResultLabel.setText("Successfully connected");
+                    inputAddressTextField.setEditable(false);
+                    connectButton.setText("Reset");
+
+                    Vector<String> videoFolders = client.getVideoFolderNames();
+                    for (int i = 0; i < videoFolders.size(); i++) {
+                        Button button = new Button(videoFolders.elementAt(i));
+                        videoButtons.add(button);
+                    }
+
+                    vBox.getChildren().addAll(videoButtons);
+                } catch (Exception e) {
+                    connectionResultLabel.setText(e.getMessage());
+                }
+            } else {
+//                String playlistFileName = "index.m3u8";
+                vBox.getChildren().removeAll(videoButtons);
+                videoButtons.clear();
+
+                client = null;
+                connectButton.setText("Connect");
+                connectionResultLabel.setText("");
+                inputAddressTextField.setText("");
+                inputAddressTextField.setEditable(true);
+            }
+        });
     }
 
     private void connect(String address) throws Exception {

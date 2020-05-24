@@ -9,23 +9,27 @@ import jv.http.HTTPRequest;
 import jv.http.HTTPResponse;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URL;
 import java.util.Vector;
 
 public class HLSClient {
 
+    // Root folder of the server must contain folders with .m3u8 file + .ts files
+    // name of folder == name of video
+    // every folder in root will be recognized as video folder
+
     final public URL domain; // "http://localhost:8080/
                                                      // test4/index.m3u8";
     final private String playlistFileExtension = "m3u8";
-    final private Vector<String> relativePathStringsToPlaylistDirectories = new Vector<>(0);
+    final private Vector<String> videoFolderNames = new Vector<>(0);
 
     public HLSClient(URL domain) throws Exception {
         this.domain = domain;
@@ -108,7 +112,17 @@ public class HLSClient {
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document document = builder.parse(new ByteArrayInputStream(data));
 
+//        System.out.println(new String(data));
+
         Element root = document.getDocumentElement();
+        NodeList videoFolders = root.getElementsByTagName("dir");
+        for (int i = 0; i < videoFolders.getLength(); i++) {
+            videoFolderNames.add(videoFolders.item(i).getTextContent());
+        }
+    }
+
+    public Vector<String> getVideoFolderNames() {
+        return videoFolderNames;
     }
 
     public HLSMedia getMedia(String playlistDirectory, String playlistFileName) {
