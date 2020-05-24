@@ -117,7 +117,6 @@ public class Main extends Application {
                         button.setOnAction(actionEvent -> {
                             String videoName = button.getText();
                             HLSMedia hlsMedia = client.getMedia(videoName);
-                            System.out.println(hlsMedia);
                             if (hlsMedia != null) {
                                 Stage videoStage = new Stage();
                                 videoStage.setTitle(videoName);

@@ -43,6 +43,8 @@ public class HLSClient {
     }
 
     private void getAvailableVideos() throws Exception {
+        videoFolderNames.clear();
+
         String host = domain.getHost();
         int port = domain.getPort();
         if (port == -1) {
@@ -114,7 +116,7 @@ public class HLSClient {
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document document = builder.parse(new ByteArrayInputStream(data));
 
-//        System.out.println(new String(data));
+        System.out.println(new String(data));
 
         Element root = document.getDocumentElement();
         NodeList videoFolders = root.getElementsByTagName("dir");
@@ -128,14 +130,14 @@ public class HLSClient {
     }
 
     public HLSMedia getMedia(String playlistDirectory) {
-//        try {
-//            getAvailableVideos();
-//        } catch (Exception e) {
-//            return null;
-//        }
-//        if (!videoFolderNames.contains(playlistDirectory)) {
-//            return null;
-//        }
+        try {
+            getAvailableVideos();
+        } catch (Exception e) {
+            return null;
+        }
+        if (!videoFolderNames.contains(playlistDirectory)) {
+            return null;
+        }
 
         String source = domain + playlistDirectory + "/" + playlistFileName;
         Media media;
