@@ -1,4 +1,4 @@
-import jv.fileserver.HLSServerThread;
+import jv.fileserver.FileServerThread;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -58,7 +58,7 @@ public class Main {
                 // https://www.hlstester.com/
                 // http://inspectstream.theoplayer.com/
 
-                HLSServerThread thread = new HLSServerThread(socket, serverFilesFolderPathString);
+                FileServerThread thread = new FileServerThread(socket, serverFilesFolderPathString);
                 thread.start();
             }
         } catch (IOException e) {

@@ -8,12 +8,12 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-public class HLSServerThread extends Thread {
+public class FileServerThread extends Thread {
 
     private final Socket socket;
     private final String serverFilesFolderPath;
 
-    public HLSServerThread(Socket socket, String severFilesFolderPath) {
+    public FileServerThread(Socket socket, String severFilesFolderPath) {
         this.socket = socket;
         this.serverFilesFolderPath = severFilesFolderPath;
     }
@@ -26,8 +26,8 @@ public class HLSServerThread extends Thread {
              DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream())){
 
             HTTPRequest request = new HTTPRequest(inputStream);
-//            request.outputRequest();
-//            System.out.println();
+            request.outputRequest();
+            System.out.println();
             HTTPResponse response = new APIHandler(request, serverFilesFolderPath).getResponse();
             response.send(outputStream);
 
