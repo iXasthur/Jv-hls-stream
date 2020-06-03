@@ -1,8 +1,4 @@
 import javafx.application.Application;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -25,8 +21,7 @@ import javafx.stage.WindowEvent;
 import jv.hlsclient.HLSClient;
 import jv.hlsclient.HLSMedia;
 
-import java.awt.Toolkit;
-import java.awt.Dimension;
+import java.awt.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Vector;
